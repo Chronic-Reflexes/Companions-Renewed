@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import me.astero.companions.CompanionsPlugin;
 import me.astero.companions.companiondata.PlayerCache;
 import me.astero.companions.companiondata.PlayerData;
-import me.astero.companions.companiondata.packets.CompanionPacket_1_15;
 import me.astero.companions.gui.MainMenu;
 import me.astero.companions.gui.OwnedMenu;
 import me.astero.companions.gui.PlayerDetailsMenu;
@@ -200,18 +199,11 @@ public class CompanionCommand implements CommandExecutor {
 			}
 			else if(args[0].equalsIgnoreCase("test"))
 			{
-				
-				
-				
-				System.out.println(PlayerData.instanceOf(player).getActiveCompanionName());
-				
-				System.out.println(PlayerData.instanceOf(player).getActiveCompanionName().equals("NONE"));
-				
-				System.out.println("NONE".length());
-				System.out.println(PlayerData.instanceOf(player).getActiveCompanionName().length());
-				
-				
-				
+				String activeName = PlayerData.instanceOf(player).getActiveCompanionName();
+				player.sendMessage(ChatColor.YELLOW + "Active companion: " + activeName);
+				player.sendMessage(ChatColor.YELLOW + "Is NONE: " + String.valueOf("NONE".equals(activeName)));
+				player.sendMessage(ChatColor.YELLOW + "\"NONE\" length: " + "NONE".length());
+				player.sendMessage(ChatColor.YELLOW + "Name length: " + (activeName == null ? "null" : String.valueOf(activeName.length())));
 				//main.getAnimation().executeAnimation(player);
 				 /* CraftPlayer cp = (CraftPlayer) player;
 				 CraftWorld cw = (CraftWorld) player.getLocation().getWorld();
@@ -243,8 +235,8 @@ public class CompanionCommand implements CommandExecutor {
 					
 					main.getDatabase().close(conn, p, rs);
 					
-				} 
-				catch (SQLException e) 
+				}
+				catch (SQLException e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -347,7 +339,7 @@ public class CompanionCommand implements CommandExecutor {
 			}
 			else
 			{
-				System.out.println(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getNotPlayerMessage()));
+				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getNotPlayerMessage()));
 			}
 		}
 		return false;

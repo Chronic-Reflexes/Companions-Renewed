@@ -13,16 +13,10 @@ public class CAPI {
 	 *  @param Player instance
 	 *  @return true if summoned, false if not summoned
 	 */
-    public static boolean isSummoned(Player player)
-    {
-        if(PlayerData.instanceOf(player).getActiveCompanionName() == null ||
-                PlayerData.instanceOf(player).getActiveCompanionName() == "NONE")
-        {
-            return false;
-        }
-
-        return true;
-    }
+	public static boolean isSummoned(Player player)
+	{
+		return PlayerData.instanceOf(player).hasActiveCompanionSelected();
+	}
 	
 	/* 
 	 *  Gets the Summoned Companion's Name.

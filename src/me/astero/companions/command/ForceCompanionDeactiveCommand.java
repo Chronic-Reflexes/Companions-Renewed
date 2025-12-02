@@ -31,25 +31,16 @@ public class ForceCompanionDeactiveCommand implements CommandExecutor {
 				{
 					Player target = Bukkit.getPlayer(args[0]);
 					
-					if(PlayerData.instanceOf(target).getActiveCompanionName() != null)
+					if(PlayerData.instanceOf(target).hasActiveCompanionSelected())
 					{
-						if(PlayerData.instanceOf(target).getActiveCompanionName() != "NONE")
-						{
-							PlayerData.instanceOf(target).removeCompanion();
-							main.getCompanionUtil().storeActiveDB("NONE", target);
-							main.getCompanionUtil().storeActiveYML(target, "NONE");
-							
-							PlayerData.instanceOf(target).setActiveCompanionName("NONE");
-							
-							target.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getRemoveCompanionMessage()));
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getCompanionRemovedMessage()));
-				
+						PlayerData.instanceOf(target).removeCompanion();
+						main.getCompanionUtil().storeActiveDB("NONE", target);
+						main.getCompanionUtil().storeActiveYML(target, "NONE");
 						
-						}
-						else
-						{
-							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getForceUpgradeNotSuccessfulMessage()));
-						}
+						PlayerData.instanceOf(target).setActiveCompanionName("NONE");
+						
+						target.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getRemoveCompanionMessage()));
+						sender.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getCompanionRemovedMessage()));
 					}
 					else
 					{

@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -15,9 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.astero.companions.CompanionsPlugin;
 import me.astero.companionsapi.api.CAPI;
-import net.minecraft.server.v1_15_R1.EntityArmorStand;
-import net.minecraft.server.v1_15_R1.PacketPlayOutEntityMetadata;
-import net.minecraft.server.v1_15_R1.PacketPlayOutSpawnEntityLiving;
 
 public class PlayerData {
 	
@@ -27,7 +23,6 @@ public class PlayerData {
 	
 	@Getter private final static Map<UUID, PlayerData> players = new HashMap<>(); // One static to control the class.
 	
-	@Getter private final HashMap<Player, Boolean> playerPacketList  = new HashMap<>();
 
 	
 	@Getter @Setter private ArmorStand activeCompanion, mysteryCompanion;
@@ -185,6 +180,11 @@ public class PlayerData {
 	public void setPageNumber(int number)
 	{
 		this.pageNumber = number;
+	}
+
+	public boolean hasActiveCompanionSelected()
+	{
+		return this.activeCompanionName != null && !this.activeCompanionName.equalsIgnoreCase("NONE");
 	}
 	
 	

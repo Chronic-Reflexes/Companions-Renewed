@@ -34,7 +34,7 @@ public class ForceCompanionUpgradeCommand implements CommandExecutor {
 				{
 					
 					Player player = Bukkit.getPlayer(args[0]);
-					if(PlayerData.instanceOf(player).getActiveCompanionName() != "NONE" && PlayerData.instanceOf(player).getActiveCompanionName() != null)
+					if(PlayerData.instanceOf(player).hasActiveCompanionSelected())
 					{
 						if(args[1].equalsIgnoreCase("ability"))
 						{

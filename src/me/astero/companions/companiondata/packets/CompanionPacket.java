@@ -3,19 +3,25 @@ package me.astero.companions.companiondata.packets;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Abstraction that allows the plugin to manage companion armor stands
+ * regardless of the underlying server implementation.
+ */
 public interface CompanionPacket {
-	
-	public void loadCompanion(Player player);
-	
-	public void companionFollow(Player player);
-	
-	public void despawnCompanion(Player player, Player packetPlayer);
-	
-	public void despawnCompanion(Player player);
-	public void toggleCompanion(Player player);
-	
-	public void setCustomName(Player player, String newName);
-	public void setCustomNameVisible(Player player, boolean visible);
-	public void setCustomWeapon(Player player, ItemStack itemStack);
 
+    void loadCompanion(Player player);
+
+    void companionFollow(Player player);
+
+    void despawnCompanion(Player player, Player packetPlayer);
+
+    void despawnCompanion(Player player);
+
+    void toggleCompanion(Player player);
+
+    void setCustomName(Player player, String newName);
+
+    void setCustomNameVisible(Player player, boolean visible);
+
+    void setCustomWeapon(Player player, ItemStack itemStack);
 }

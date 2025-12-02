@@ -1,13 +1,15 @@
 package me.astero.companions.companiondata.abilities;
 
+import java.util.Locale;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Entity;
@@ -30,6 +32,7 @@ import me.astero.companions.CompanionsPlugin;
 import me.astero.companions.companiondata.PlayerCache;
 import me.astero.companions.companiondata.PlayerData;
 
+@SuppressWarnings("deprecation")
 public class CustomAbilities implements Listener {
 	
 	private CompanionsPlugin main;
@@ -225,7 +228,7 @@ public class CustomAbilities implements Listener {
 						.getAbilityList().contains("LEAP"))
 				{
 
-					if(player.getInventory().getItemInHand().getType().equals(Material.AIR))
+					if(player.getInventory().getItemInMainHand().getType().equals(Material.AIR))
 					{
 						if(getAction.equals(Action.LEFT_CLICK_AIR))
 						{
@@ -265,25 +268,9 @@ public class CustomAbilities implements Listener {
 								player.setVelocity(player.getLocation().getDirection().normalize().multiply(main.getFileHandler().getVectorMultiplier() * 
 										PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase()).getAbilityLevel()));
 								
-								try
+								for(int i = 0; i <5; i++)
 								{
-									for(int i = 0; i <5; i+=1)
-									{
-										player.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation(), 30, 0, 0, 0, 1);
-									}
-								}
-								catch(NoClassDefFoundError olderVersion)
-								{
-									try
-									{
-						                for(int i = 0; i <30; i+=1)
-						                {
-				
-						                	player.getWorld().playEffect(player.getLocation(), Effect.valueOf("FIREWORKS_SPARK"), 51);
-						                }
-									}
-									catch(IllegalArgumentException particleNotFound) {}
-				
+									player.getWorld().spawnParticle(Particle.FIREWORK, player.getLocation(), 30, 0, 0, 0, 0.05);
 								}
 								
 								try
@@ -293,8 +280,8 @@ public class CustomAbilities implements Listener {
 								}
 								 catch(IllegalArgumentException soundNotFound)
 								 {
-									 System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Vector Jump sound - " + ChatColor.YELLOW + 
-											 main.getFileHandler().getVectorJumpSound() + ChatColor.RED +" is not found.");
+									 main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Vector Jump sound - " + ChatColor.YELLOW + 
+										 main.getFileHandler().getVectorJumpSound() + ChatColor.RED +" is not found.");
 								 }
 							}
 							else
@@ -319,119 +306,120 @@ public class CustomAbilities implements Listener {
 	public void givePhysicalAbility (EntityDamageByEntityEvent e)
 	{
 		Entity hitTaker = e.getEntity();
-		
 		Entity hitDamager = e.getDamager();
 
-		
-		if(hitTaker instanceof Player)
+		if(!(hitTaker instanceof Player))
 		{
-			Player player = (Player) hitTaker;
-			
+			return;
+		}
 
-			try
+		Player player = (Player) hitTaker;
+
+		try
+		{
+			if(PlayerData.instanceOf(player).isToggled())
 			{
-				if(!PlayerData.instanceOf(player).isToggled())
+				return;
+			}
+
+			Random random = new Random();
+			int chance = random.nextInt(100);
+			String activeCompanion = PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase(Locale.ROOT);
+
+			for(String potionEffect : main.getCompanionUtil().getPhysicalAbilities())
+			{
+				if(chance > main.getFileHandler().getPhyiscalAbilityDetails().get(potionEffect).getChance())
 				{
-				
-					
-					Random random = new Random();
-					
-					int chance = random.nextInt(100);
-					
-					
-					
-					String activeCompanion = PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase();
-				
-					for(String potionEffect : main.getCompanionUtil().getPhysicalAbilities())
+					continue;
+				}
+
+				PotionEffectType resolvedEffect = resolvePotionEffectType(potionEffect);
+				if(resolvedEffect == null)
+				{
+					main.getLogger().warning("Could not resolve potion effect type: " + potionEffect);
+					continue;
+				}
+
+				int duration = 20 * main.getFileHandler().getPhyiscalAbilityDetails().get(potionEffect).getDuration();
+				int amplifier = PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel() - 1;
+
+				if(main.getFileHandler().getCompanionDetails().get(activeCompanion).getAbilityList().contains(potionEffect + "_DEFENSE_CHANCE"))
+				{
+					player.addPotionEffect(new PotionEffect(resolvedEffect, duration, amplifier));
+				}
+				else if(main.getFileHandler().getCompanionDetails().get(activeCompanion).getAbilityList().contains(potionEffect + "_ATTACK_CHANCE"))
+				{
+					LivingEntity damager = main.getCompanionUtil().getDamager(hitDamager);
+					if(damager != null)
 					{
-						if(chance <= main.getFileHandler().getPhyiscalAbilityDetails().get(potionEffect).getChance())
-						{
-							if(main.getFileHandler().getCompanionDetails().get(activeCompanion).getAbilityList().contains(potionEffect + "_DEFENSE_CHANCE"))
-							{
-			
-			
-								player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(potionEffect), 20* main.getFileHandler().getPhyiscalAbilityDetails().get(potionEffect).getDuration(), 
-										PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel() - 1));
-			
-								
-							}
-							else if(main.getFileHandler().getCompanionDetails().get(activeCompanion).getAbilityList().contains(potionEffect + "_ATTACK_CHANCE"))
-							{
-								LivingEntity damager = main.getCompanionUtil().getDamager(hitDamager);
-								
-								if(damager != null)
-								{
-									damager.addPotionEffect(new PotionEffect(PotionEffectType.getByName(potionEffect), 20* main.getFileHandler().getPhyiscalAbilityDetails().get(potionEffect).getDuration(), 
-											PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel() - 1));
-								}
-							}
-						}
-					}
-					
-					if(chance <= main.getFileHandler().getSpeedBurstChance())
-					{
-						if(main.getFileHandler().getCompanionDetails().get(PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase()).getAbilityList().contains("SPEED_BURST"))
-						{
-							if(!PlayerData.instanceOf(player).isSpeedBoosted())
-							{
-								
-								player.setWalkSpeed(0.5F);
-								PlayerData.instanceOf(player).setSpeedBoosted(true);
-								 Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
-										
-									  @Override
-									 public void run()
-									 {
-										  
-										 
-										  player.setWalkSpeed(0.19996406F); // Default walk
-										  PlayerData.instanceOf(player).setSpeedBoosted(false);
-										
-										
-									 }
-									 
-								 }, PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel() * main.getFileHandler().getSpeedBurstDuration()); 
-							}
-							 
-							
-						}
-					}
-					
-					if(chance <= main.getFileHandler().getFlingChance() + 
-							(PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel()  - 1 ) * main.getFileHandler().getFlingUpgrade())
-					{
-						if(main.getFileHandler().getCompanionDetails().get(PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase()).getAbilityList().contains("FLING"))
-						{
-							LivingEntity damager = main.getCompanionUtil().getDamager(hitDamager);
-							
-							if(damager != null)
-							{
-								damager.setVelocity(new Vector(0, main.getFileHandler().getFlingDistance(), 0));
-							}
-	
-						}
-					}
-					
-					if(chance <= main.getFileHandler().getEndermanChance() + 
-							(PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel()  - 1 ) * main.getFileHandler().getEndermanUpgrade())
-					{
-						if(main.getFileHandler().getCompanionDetails().get(PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase()).getAbilityList().contains("ENDERMAN"))
-						{
-							int randomX = random.nextInt(5);
-	
-							player.launchProjectile(EnderPearl.class, new Vector(0,1,randomX));
-						}
+						damager.addPotionEffect(new PotionEffect(resolvedEffect, duration, amplifier));
 					}
 				}
 			}
-			catch(NullPointerException noCompanion) {}
-		}
-			
-		
 
-		
+			if(chance <= main.getFileHandler().getSpeedBurstChance())
+			{
+				if(main.getFileHandler().getCompanionDetails().get(activeCompanion).getAbilityList().contains("SPEED_BURST"))
+				{
+					if(!PlayerData.instanceOf(player).isSpeedBoosted())
+					{
+						player.setWalkSpeed(0.5F);
+						PlayerData.instanceOf(player).setSpeedBoosted(true);
+						Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+							@Override
+							public void run()
+							{
+								player.setWalkSpeed(0.19996406F); // Default walk
+								PlayerData.instanceOf(player).setSpeedBoosted(false);
+							}
+						}, PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel() * main.getFileHandler().getSpeedBurstDuration());
+					}
+				}
+			}
+
+			if(chance <= main.getFileHandler().getFlingChance() + (PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel() - 1) * main.getFileHandler().getFlingUpgrade())
+			{
+				if(main.getFileHandler().getCompanionDetails().get(activeCompanion).getAbilityList().contains("FLING"))
+				{
+					LivingEntity damager = main.getCompanionUtil().getDamager(hitDamager);
+					if(damager != null)
+					{
+						damager.setVelocity(new Vector(0, main.getFileHandler().getFlingDistance(), 0));
+					}
+				}
+			}
+
+			if(chance <= main.getFileHandler().getEndermanChance() + (PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache().get(activeCompanion).getAbilityLevel() - 1) * main.getFileHandler().getEndermanUpgrade())
+			{
+				if(main.getFileHandler().getCompanionDetails().get(activeCompanion).getAbilityList().contains("ENDERMAN"))
+				{
+					int randomX = random.nextInt(5);
+					player.launchProjectile(EnderPearl.class, new Vector(0, 1, randomX));
+				}
+			}
+		}
+		catch(NullPointerException noCompanion) {}
 	}
-	
+
+
+	private PotionEffectType resolvePotionEffectType(String effectName)
+	{
+		if(effectName == null || effectName.isEmpty())
+		{
+			return null;
+		}
+
+		NamespacedKey key = effectName.contains(":")
+				? NamespacedKey.fromString(effectName.toLowerCase(Locale.ROOT))
+				: NamespacedKey.minecraft(effectName.toLowerCase(Locale.ROOT));
+		if(key == null)
+		{
+			return null;
+		}
+
+		return Registry.EFFECT.get(key);
+	}
+
 	public void executeCommand(Player player)
 	{
 		PlayerData.instanceOf(player).setCommandInterval(0);
@@ -455,7 +443,7 @@ public class CustomAbilities implements Listener {
 						catch(NumberFormatException notANumber)
 						{
 							interval = 60 * 1200;
-							System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + commandParameters[0] + " is not a valid number for an interval. "
+							main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + commandParameters[0] + " is not a valid number for an interval. "
 									+ "(As a result, interval has been automatically set to 60 minutes.");
 						}
 

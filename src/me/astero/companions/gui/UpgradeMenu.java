@@ -14,6 +14,7 @@ import me.astero.companions.companiondata.PlayerCache;
 import me.astero.companions.companiondata.PlayerData;
 import me.astero.companions.util.InventoryBuilder;
 
+@SuppressWarnings("deprecation")
 public class UpgradeMenu {
 	
 	private CompanionsPlugin main;
@@ -38,14 +39,15 @@ public class UpgradeMenu {
 		
 		String activeCompanion;
 		ItemStack abilityLevel = main.getFileHandler().getAbilityLevel();
+		String selectedCompanion = PlayerData.instanceOf(player).getActiveCompanionName();
 		
-		if(PlayerData.instanceOf(player).getActiveCompanionName() == null || PlayerData.instanceOf(player).getActiveCompanionName().equals("NONE"))
+		if(!PlayerData.instanceOf(player).hasActiveCompanionSelected())
 		{
 			activeCompanion = "NONE";
 		}
 		else
 		{
-			activeCompanion = PlayerData.instanceOf(player).getActiveCompanionName();
+			activeCompanion = selectedCompanion;
 			
 
 			
@@ -67,11 +69,11 @@ public class UpgradeMenu {
 			try
 			{
 				setLore.add(ChatColor.translateAlternateColorCodes('&', getLore.replace("%active_companion%", activeCompanion)
-						.replace("%companion_level%", String.valueOf(PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache()
-								.get(PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase()).getAbilityLevel()))
-						.replace("%companion_name%", PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache()
-										.get(PlayerData.instanceOf(player).getActiveCompanionName().toLowerCase()).getCustomName())
-						.replace("%active_companion_l%", activeCompanion.substring(0, 1) + activeCompanion.substring(1).toLowerCase())));
+					.replace("%companion_level%", String.valueOf(PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache()
+							.get(selectedCompanion.toLowerCase()).getAbilityLevel()))
+					.replace("%companion_name%", PlayerCache.instanceOf(player.getUniqueId()).getOwnedCache()
+								.get(selectedCompanion.toLowerCase()).getCustomName())
+					.replace("%active_companion_l%", activeCompanion.substring(0, 1) + activeCompanion.substring(1).toLowerCase())));
 			}
 			catch(NullPointerException firstJoin)
 			{
@@ -109,7 +111,7 @@ public class UpgradeMenu {
 		}
 		 catch(IllegalArgumentException soundNotFound)
 		 {
-			 System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Upgrade Menu sound - " + ChatColor.YELLOW + 
+			 main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Upgrade Menu sound - " + ChatColor.YELLOW + 
 					 main.getFileHandler().getUpgradeAbilitiesSound() + ChatColor.RED +" is not found.");
 		 }
 		

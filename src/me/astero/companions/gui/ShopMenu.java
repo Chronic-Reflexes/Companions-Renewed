@@ -61,7 +61,7 @@ public class ShopMenu {
 		}
 		 catch(IllegalArgumentException soundNotFound)
 		 {
-			 System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Shop Menu sound - " + ChatColor.YELLOW + 
+			 main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Shop Menu sound - " + ChatColor.YELLOW + 
 					 main.getFileHandler().getCompanionShopSound() + ChatColor.RED +" is not found.");
 		 }
 		

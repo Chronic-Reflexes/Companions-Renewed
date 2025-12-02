@@ -87,7 +87,7 @@ public class TradeCompanionCommand implements CommandExecutor {
 		}
 		else
 		{
-			System.out.println(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getNotPlayerMessage()));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', main.getCompanionUtil().getPrefix() + main.getFileHandler().getNotPlayerMessage()));
 		}
 		return false;
 	}

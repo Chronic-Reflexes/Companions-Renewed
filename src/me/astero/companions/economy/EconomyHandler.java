@@ -6,6 +6,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import me.astero.companions.CompanionsPlugin;
 import net.milkbowl.vault.economy.Economy;
 
+@SuppressWarnings("deprecation")
 public class EconomyHandler {
 	
 	private CompanionsPlugin main;
@@ -18,16 +19,16 @@ public class EconomyHandler {
         if (!setupEconomy())
         {
         	main.getFileHandler().setVault(false);
-        	System.out.println("\n" +ChatColor.GOLD + "(!) " + ChatColor.YELLOW + "Vault and or an Economy plugin is not found,");
-        	System.out.println(ChatColor.YELLOW + "    therefore economy will not be used!"); 
-        	System.out.println(ChatColor.YELLOW +  "    (It is recommended to use Vault &");
-        	System.out.println(ChatColor.YELLOW + "    an Economy plugin for the best experience.)\n");
+        	main.getLogger().warning(ChatColor.GOLD + "(!) " + ChatColor.YELLOW + "Vault and or an Economy plugin is not found,");
+        	main.getLogger().warning(ChatColor.YELLOW + "    therefore economy will not be used!"); 
+        	main.getLogger().warning(ChatColor.YELLOW +  "    (It is recommended to use Vault &");
+        	main.getLogger().warning(ChatColor.YELLOW + "    an Economy plugin for the best experience.)");
             return;
         }
         else
         {
         	main.getFileHandler().setVault(true);
-        	System.out.println("\n" + ChatColor.GOLD + "(!) " + ChatColor.YELLOW + "Vault and an Economy plugin has been found, the plugin will be using them.\n");
+        	main.getLogger().info(ChatColor.GOLD + "(!) " + ChatColor.YELLOW + "Vault and an Economy plugin has been found, the plugin will be using them.");
         }
 	}
 	

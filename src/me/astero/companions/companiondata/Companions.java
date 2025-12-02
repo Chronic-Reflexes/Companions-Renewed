@@ -1,6 +1,5 @@
 package me.astero.companions.companiondata;
 
-import java.lang.reflect.Field;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -18,8 +17,8 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.util.EulerAngle;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 
 import me.astero.companions.CompanionsPlugin;
 import me.astero.companions.filemanager.CompanionDetails;
@@ -45,7 +44,7 @@ public class Companions {
 		{
 			if(!PlayerData.instanceOf(player).isRespawned() && !PlayerData.instanceOf(player).isTeleport())
 			{
-					if(!PlayerData.instanceOf(player).getActiveCompanionName().equals("NONE") && !PlayerData.instanceOf(player).isToggled() && 
+					if(PlayerData.instanceOf(player).hasActiveCompanionSelected() && !PlayerData.instanceOf(player).isToggled() && 
 							!PlayerData.instanceOf(player).isMounted())
 					{
 						if(!main.getFileHandler().getDisabledWorlds().contains(player.getWorld().getName()))
@@ -136,7 +135,7 @@ public class Companions {
 	                    newLoc.setZ(newLoc.getZ() + Math.cos(i)*0.5);
 	                    newLoc.setX(newLoc.getX() + Math.sin(i)*0.5);
 	                    
-						player.getWorld().spawnParticle(Particle.DRIP_LAVA, newLoc, 1, 0, 0, 0, 10);
+					player.getWorld().spawnParticle(Particle.DRIPPING_LAVA, newLoc, 1, 0, 0, 0, 10);
 	                }
 					
 				}
@@ -297,21 +296,10 @@ public class Companions {
 		SkullMeta companionHeadMeta = (SkullMeta) companionSkull.getItemMeta();	
 		
 		String url = main.getFileHandler().getCompanionDetails().get(companionName.toLowerCase()).getPlayerSkull();
-		
-		GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-		
-		profile.getProperties().put("textures", new Property("textures", url));
-		
-		try
-		{
-			Field profileField = companionHeadMeta.getClass().getDeclaredField("profile");
-			profileField.setAccessible(true);
-			profileField.set(companionHeadMeta, profile);
-		}
-		catch(IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException error)
-		{
-			error.printStackTrace();
-		}
+		String profileName = ("companion-" + UUID.randomUUID()).substring(0, 16);
+		PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID(), profileName);
+		profile.setProperty(new ProfileProperty("textures", url));
+		companionHeadMeta.setPlayerProfile(profile);
 
 		companionSkull.setItemMeta(companionHeadMeta);
 		

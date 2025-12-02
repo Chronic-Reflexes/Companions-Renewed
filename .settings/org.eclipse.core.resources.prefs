@@ -5,7 +5,6 @@ encoding//src/me/astero/companions/command/CompanionCommand.java=UTF-8
 encoding//src/me/astero/companions/companiondata/Companions.java=UTF-8
 encoding//src/me/astero/companions/companiondata/abilities/CustomAbilities.java=UTF-8
 encoding//src/me/astero/companions/companiondata/abilities/PotionEffectAbility.java=UTF-8
-encoding//src/me/astero/companions/companiondata/packets/CompanionPacket_1_15.java=UTF-8
 encoding//src/me/astero/companions/economy/EconomyHandler.java=UTF-8
 encoding//src/me/astero/companions/filemanager/FileHandler.java=UTF-8
 encoding//src/me/astero/companions/filemanager/FileManager.java=UTF-8

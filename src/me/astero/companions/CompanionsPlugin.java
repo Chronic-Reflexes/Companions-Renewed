@@ -3,10 +3,10 @@ package me.astero.companions;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
 import me.astero.companions.companiondata.PlayerData;
-import me.astero.companions.companiondata.packets.*;
+import me.astero.companions.companiondata.packets.ArmorStandCompanionPacket;
+import me.astero.companions.companiondata.packets.CompanionPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,7 +30,6 @@ import me.astero.companions.companiondata.abilities.PotionEffectAbility;
 import me.astero.companions.companiondata.animations.Animation;
 import me.astero.companions.currency.CompanionCoin;
 import me.astero.companions.database.Database;
-import me.astero.companions.database.VersionChecker;
 import me.astero.companions.economy.EconomyHandler;
 import me.astero.companions.filemanager.FileHandler;
 import me.astero.companions.filemanager.FileManager;
@@ -51,6 +50,7 @@ import me.astero.companions.util.CompanionUtil;
 import me.astero.companions.util.FormatNumbers;
 
 
+@SuppressWarnings("deprecation")
 public class CompanionsPlugin extends JavaPlugin {
 	
 
@@ -71,7 +71,7 @@ public class CompanionsPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() 
 	{
-		System.out.println("\n" + ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " is loading up...\n");
+		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " is loading up...");
 		
 		getConfig().options().copyDefaults();
 		saveDefaultConfig();
@@ -80,10 +80,10 @@ public class CompanionsPlugin extends JavaPlugin {
 	
 		fileManager = new FileManager(this);
 		formatNumbers = new FormatNumbers();
-		System.out.println(ChatColor.GOLD + ">" + ChatColor.GRAY + " YAML files are loaded up!");
+		getLogger().info(ChatColor.GOLD + ">" + ChatColor.GRAY + " YAML files are loaded up!");
 		companionUtil = new CompanionUtil(this);
 		fileHandler = new FileHandler(this);
-		System.out.println(ChatColor.GOLD + ">" + ChatColor.GRAY + " Caching files is done!");
+		getLogger().info(ChatColor.GOLD + ">" + ChatColor.GRAY + " Caching files is done!");
 		
 		companions = new Companions(this);
 		potionEffectAbility = new PotionEffectAbility(this);
@@ -93,7 +93,7 @@ public class CompanionsPlugin extends JavaPlugin {
 		new EconomyHandler(this);
 		
 		
-		System.out.println(ChatColor.GOLD + ">" + ChatColor.GRAY + " Misc files are loaded up!");
+		getLogger().info(ChatColor.GOLD + ">" + ChatColor.GRAY + " Misc files are loaded up!");
 
 
 		
@@ -111,7 +111,7 @@ public class CompanionsPlugin extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new VanishListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new VehicleListener(this), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerDetailsMenuListener(this), this);	
-		System.out.println(ChatColor.GOLD + ">" + ChatColor.GRAY + " Event Listeners are loaded up!");
+		getLogger().info(ChatColor.GOLD + ">" + ChatColor.GRAY + " Event Listeners are loaded up!");
 		
 		getCommand("companions").setExecutor(new CompanionCommand(this));
 		getCommand("givecompanion").setExecutor(new GiveCompanionCommand(this));
@@ -124,12 +124,12 @@ public class CompanionsPlugin extends JavaPlugin {
 		getCommand("forcedeactive").setExecutor(new ForceCompanionDeactiveCommand(this));
 		getCommand("companioncoin").setExecutor(new CompanionCoinCommand(this));
 		
-		System.out.println(ChatColor.GOLD + ">" + ChatColor.GRAY + " Commands are loaded up!");
+		getLogger().info(ChatColor.GOLD + ">" + ChatColor.GRAY + " Commands are loaded up!");
 		
-		System.out.println("\n" + ChatColor.GOLD + "              >--------------------------<");
-		System.out.println(ChatColor.GOLD + "              A total of " + ChatColor.YELLOW + this.getFileHandler().getCompanionDetails().size() + ChatColor.GOLD + " Companions have");
-		System.out.println(ChatColor.GOLD + "                    been loaded up." );
-		System.out.println(ChatColor.GOLD + "              >--------------------------< \n");
+		getLogger().info(ChatColor.GOLD + "              >--------------------------<");
+		getLogger().info(ChatColor.GOLD + "              A total of " + ChatColor.YELLOW + this.getFileHandler().getCompanionDetails().size() + ChatColor.GOLD + " Companions have");
+		getLogger().info(ChatColor.GOLD + "                    been loaded up.");
+		getLogger().info(ChatColor.GOLD + "              >--------------------------<");
 		
 		
 
@@ -145,7 +145,7 @@ public class CompanionsPlugin extends JavaPlugin {
 	    }
 
 
-		System.out.println(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " has been sucessfully loaded up!\n");
+		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " has been sucessfully loaded up!");
 		
 		//VersionChecker vc = new VersionChecker(this);
 		
@@ -166,7 +166,7 @@ public class CompanionsPlugin extends JavaPlugin {
 	public void onDisable() {
 		//int companionCount = 0;
 
-		System.out.println(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " is disabling and saving necessary files..");
+		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " is disabling and saving necessary files..");
 
 
 		PreparedStatement p = null;
@@ -192,7 +192,7 @@ public class CompanionsPlugin extends JavaPlugin {
 		
 		database.onDisabled();
 		
-		System.out.println(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " has been sucessfully disabled!\n");
+		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " has been sucessfully disabled!");
 	}
 	
 	public void saveActiveCompanion(String getCompanionName, Player player, PreparedStatement p, Connection conn) // method not in used
@@ -234,95 +234,9 @@ public class CompanionsPlugin extends JavaPlugin {
 	
 	public void setupNMS()
 	{
-		String spigotVersion = null;
-		
-		try
-		{
-			spigotVersion = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-		}
-		catch(ArrayIndexOutOfBoundsException versionNotFound) {}
-
-
-		if(spigotVersion.equals("v1_19_R1"))
-		{
-			source = "com.mysql.cj.jdbc.MysqlDataSource";
-			companionPacket = new CompanionPacket_1_19_R1(this);
-		}
-		else if(spigotVersion.equals("v1_18_R2") )
-		{
-			source = "com.mysql.cj.jdbc.MysqlDataSource";
-			//companionPacket = new CompanionPacket_1_18_R2(this);
-		}
-
-		else if(spigotVersion.equals("v1_16_R3"))
-		{
-			companionPacket = new CompanionPacket_1_16_R3(this);
-		}
-		else if(spigotVersion.equals("v1_16_R2"))
-		{
-			companionPacket = new CompanionPacket_1_16_R2(this);
-		}
-		else if(spigotVersion.equals("v1_16_R1"))
-		{
-			companionPacket = new CompanionPacket_1_16(this);
-		}
-		else if(spigotVersion.equals("v1_15_R1"))
-		{
-			companionPacket = new CompanionPacket_1_15(this);
-		}
-		else if(spigotVersion.equals("v1_14_R1"))
-		{
-			companionPacket = new CompanionPacket_1_14_R1(this);
-		}
-		else if(spigotVersion.equals("v1_13_R2"))
-		{
-			companionPacket = new CompanionPacket_1_13_R2(this);
-		}
-		else if(spigotVersion.equals("v1_13_R1"))
-		{
-			companionPacket = new CompanionPacket_1_13_R1(this);
-		}
-		else if(spigotVersion.equals("v1_12_R1"))
-		{
-			companionPacket = new CompanionPacket_1_12_R1(this);
-		}
-		else if(spigotVersion.equals("v1_11_R1"))
-		{
-			companionPacket = new CompanionPacket_1_11_R1(this);
-		}
-		else if(spigotVersion.equals("v1_10_R1"))
-		{
-			companionPacket = new CompanionPacket_1_10_R1(this);
-		}
-		else if(spigotVersion.equals("v1_9_R2"))
-		{
-			companionPacket = new CompanionPacket_1_9_R2(this);
-		}
-		else if(spigotVersion.equals("v1_9_R1"))
-		{
-			companionPacket = new CompanionPacket_1_9_R1(this);
-		}
-		else if(spigotVersion.equals("v1_8_R3"))
-		{
-			companionPacket = new CompanionPacket_1_8_R3(this);
-		}
-		else if(spigotVersion.equals("v1_8_R2"))
-		{
-			companionPacket = new CompanionPacket_1_8_R2(this);
-		}
-		else if(spigotVersion.equals("v1_8_R1"))
-		{
-			companionPacket = new CompanionPacket_1_8_R1(this);
-		}
-		else
-		{
-			
-			getLogger().log(Level.SEVERE, "ERROR! The plugin does not support this Spigot version. "
-			+ "VERSION: " + spigotVersion + " - PLEASE CONTACT THE DEVELOPER TO FIX THIS ISSUE." );
-			
-			Bukkit.getPluginManager().disablePlugin(this);
-		}
-		
+		source = "com.mysql.cj.jdbc.MysqlDataSource";
+		companionPacket = new ArmorStandCompanionPacket(this);
+		getLogger().info("Using ArmorStand companion handler for modern servers.");
 	}
 	
 

@@ -36,8 +36,8 @@ public class PotionEffectAbility {
 				}
 				catch(IllegalArgumentException noPotionFound)
 				{
-					System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + potionEffect + ChatColor.GRAY + " potion effect has failed to load. - "
-							+ "Please check if the potion effect name is for the correct Minecraft server version. ");
+					main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + potionEffect + ChatColor.GRAY + " potion effect has failed to load. - "
+						+ "Please check if the potion effect name is for the correct Minecraft server version. ");
 				}
 			}
 		}

@@ -1,13 +1,12 @@
 package me.astero.companions.util;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -21,10 +20,11 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.inventory.meta.SkullMeta;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import org.bukkit.scheduler.BukkitTask;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +36,7 @@ import me.astero.companions.economy.EconomyHandler;
 import me.astero.companionsapi.api.CAPI;
 import net.md_5.bungee.api.ChatColor;
 
+@SuppressWarnings("deprecation")
 public class CompanionUtil {
 	
 	private CompanionsPlugin main;
@@ -759,7 +760,7 @@ public class CompanionUtil {
 						getCompanionName.toUpperCase() + "'S WEAPON", 
 						1).build());
 				
-				System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.GRAY + getCompanionName + "'s Weapon failed to load. - "
+				main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.GRAY + getCompanionName + "'s Weapon failed to load. - "
 						+ "Please check if the material name is for the correct Minecraft server version.");
 			}
 		}
@@ -793,7 +794,7 @@ public class CompanionUtil {
 						getCompanionName.toUpperCase() + "'S WEAPON", 
 						1).build());
 				
-				System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.GRAY + getCompanionName + "'s Weapon failed to load. - "
+				main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.GRAY + getCompanionName + "'s Weapon failed to load. - "
 						+ "Please check if the material name is for the correct Minecraft server version.");
 			}
 		}
@@ -831,22 +832,15 @@ public class CompanionUtil {
 	
 	public void setTexture(String textureURL, ItemMeta itemMeta)
 	{
-		String url = textureURL;
-		
-		GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-		
-		profile.getProperties().put("textures", new Property("textures", url));
-		
-		try
+		if (!(itemMeta instanceof SkullMeta skullMeta))
 		{
-			Field profileField = itemMeta.getClass().getDeclaredField("profile");
-			profileField.setAccessible(true);
-			profileField.set(itemMeta, profile);
+			return;
 		}
-		catch(IllegalArgumentException | NoSuchFieldException | SecurityException | IllegalAccessException error)
-		{
-			error.printStackTrace();
-		}
+
+		String profileName = ("companion-" + UUID.randomUUID()).substring(0, 16);
+		PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID(), profileName);
+		profile.setProperty(new ProfileProperty("textures", textureURL));
+		skullMeta.setPlayerProfile(profile);
 	}
 	
 	public void setSkull(String textureURL, ItemMeta itemMeta, String customModelData)
@@ -924,8 +918,8 @@ public class CompanionUtil {
 			}
 			catch(NullPointerException companionError) 
 			{
-				System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + player.getName() + ChatColor.GRAY+ " is trying to access the Companion Owned Menu with a deleted Companion. (" + ChatColor.YELLOW + getCompanionName + ")" 
-						+ ChatColor.GRAY + " THIS IS NOT AN ERROR!");
+				main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + player.getName() + ChatColor.GRAY+ " is trying to access the Companion Owned Menu with a deleted Companion. (" + ChatColor.YELLOW + getCompanionName + ")" 
+					+ ChatColor.GRAY + " THIS IS NOT AN ERROR!");
 			}
 		}
 		
@@ -940,7 +934,7 @@ public class CompanionUtil {
 		}
 		 catch(IllegalArgumentException soundNotFound)
 		 {
-			 System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Owned Menu sound - " + ChatColor.YELLOW + 
+			 main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Owned Menu sound - " + ChatColor.YELLOW + 
 					 menuSound + ChatColor.RED +" is not found.");
 		 }
 		
@@ -951,7 +945,7 @@ public class CompanionUtil {
 	public void saveCache(Player player)
 	{
 		
-		if(PlayerData.instanceOf(player).getActiveCompanionName() != PlayerCache.instanceOf(player.getUniqueId()).getCachedCompanionName())
+		if(!Objects.equals(PlayerData.instanceOf(player).getActiveCompanionName(), PlayerCache.instanceOf(player.getUniqueId()).getCachedCompanionName()))
 		{
 			
 			PlayerCache.instanceOf(player.getUniqueId()).setCachedCompanionName(PlayerData.instanceOf(player).getActiveCompanionName());
@@ -967,8 +961,7 @@ public class CompanionUtil {
 			PlayerCache.instanceOf(player.getUniqueId()).setCachedCompanionCoins(PlayerData.instanceOf(player).getCompanionCoin());
 			
 			
-			if(String.valueOf(PlayerData.instanceOf(player).getCompanionCoin()) != null)
-				main.getCompanionCoin().updateCoinsCache(player, PlayerData.instanceOf(player).getCompanionCoin());
+			main.getCompanionCoin().updateCoinsCache(player, PlayerData.instanceOf(player).getCompanionCoin());
 		}
 
 
@@ -977,7 +970,7 @@ public class CompanionUtil {
 	public void saveCache(Player player, PlayerData pd, PreparedStatement p, Connection conn)
 	{
 		
-		if(PlayerData.instanceOf(player).getActiveCompanionName() != PlayerCache.instanceOf(player.getUniqueId()).getCachedCompanionName())
+		if(!Objects.equals(PlayerData.instanceOf(player).getActiveCompanionName(), PlayerCache.instanceOf(player.getUniqueId()).getCachedCompanionName()))
 		{
 			PlayerCache.instanceOf(player.getUniqueId()).setCachedCompanionName(PlayerData.instanceOf(player).getActiveCompanionName());
 
@@ -992,8 +985,7 @@ public class CompanionUtil {
 			PlayerCache.instanceOf(player.getUniqueId()).setCachedCompanionCoins(PlayerData.instanceOf(player).getCompanionCoin());
 
 			
-			if(String.valueOf(PlayerData.instanceOf(pd.getPlayer()).getCompanionCoin()) != null)
-				main.getCompanionCoin().updateCoinsCache(pd.getPlayer(), PlayerData.instanceOf(pd.getPlayer()).getCompanionCoin(), p, conn);
+			main.getCompanionCoin().updateCoinsCache(pd.getPlayer(), PlayerData.instanceOf(pd.getPlayer()).getCompanionCoin(), p, conn);
 		}
 		
 		

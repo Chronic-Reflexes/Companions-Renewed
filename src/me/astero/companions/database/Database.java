@@ -12,6 +12,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import me.astero.companions.CompanionsPlugin;
 
+@SuppressWarnings("deprecation")
 public class Database {
 	
 	private CompanionsPlugin main;
@@ -31,16 +32,11 @@ public class Database {
 		
 		if(main.getFileHandler().isDatabase())
 		{
-			
-	
-			System.out.println(ChatColor.GOLD + ">" + ChatColor.GRAY + " Connecting to the database..");
+			main.getLogger().info(ChatColor.GOLD + ">" + ChatColor.GRAY + " Connecting to the database..");
 			
 			initiate();
 			setupDatabase(source);
 			createTable();
-			
-			
-			System.out.println("");
 		}
 		
 
@@ -100,9 +96,7 @@ public class Database {
 			p.execute();
 
 			close(connection, p, null);
-
-
-			System.out.println(ChatColor.GRAY + "  Successfully connected to the database.");
+			main.getLogger().info(ChatColor.GRAY + "  Successfully connected to the database.");
         }
         catch (SQLException e)
         {

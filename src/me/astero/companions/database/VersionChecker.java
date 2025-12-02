@@ -12,6 +12,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import me.astero.companions.CompanionsPlugin;
 
+@SuppressWarnings("deprecation")
 public class VersionChecker {
 	
 	
@@ -33,10 +34,8 @@ public class VersionChecker {
 
 		if(main.getConfig().getBoolean("settings.versionChecking"))
 		{
-			System.out.println(ChatColor.GOLD + ">" + ChatColor.GRAY + " Checking plugin's version.");
-			
-			System.out.println(ChatColor.GRAY + "  This might take a while, hold tight.");
-			System.out.println("");
+			main.getLogger().info(ChatColor.GOLD + ">" + ChatColor.GRAY + " Checking plugin's version.");
+			main.getLogger().info(ChatColor.GRAY + "  This might take a while, hold tight.");
 			
 			initiate();
 			setupDatabase();
@@ -111,17 +110,15 @@ public class VersionChecker {
 
 				if(!latestPluginVersion.equals(currentPluginVersion))
 				{
-					System.out.println(ChatColor.RED + "  You're not using the latest plugin version! \n\n"
-							+ ChatColor.YELLOW + "YOUR VERSION: " + currentPluginVersion + "           " +
-							ChatColor.DARK_RED + "LATEST VERSION: " + latestPluginVersion + "\n");
-					System.out.println(ChatColor.RED + "  " + rs.getString("SITE"));
+					main.getLogger().warning(ChatColor.RED + "  You're not using the latest plugin version!"
+							+ "\n\n" + ChatColor.YELLOW + "YOUR VERSION: " + currentPluginVersion + "           " +
+							ChatColor.DARK_RED + "LATEST VERSION: " + latestPluginVersion);
+					main.getLogger().warning(ChatColor.RED + "  " + rs.getString("SITE"));
 				}
 				else
 				{
-					System.out.println("\n" + ChatColor.GREEN + "  You're using the latest plugin version!");
+					main.getLogger().info(ChatColor.GREEN + "  You're using the latest plugin version!");
 				}
-				
-				System.out.println("");
 			}
 			
 			p = connection.prepareStatement("SELECT * FROM patreons");
@@ -140,10 +137,9 @@ public class VersionChecker {
 			
 
         }
-        catch (SQLException e)
-        {
-        	
-        	System.out.println(ChatColor.GRAY + "  Failed to read plugin's version.");
+	        catch (SQLException e)
+	        {
+	        	main.getLogger().warning(ChatColor.GRAY + "  Failed to read plugin's version.");
 		}
 	}
 	

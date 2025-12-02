@@ -11,7 +11,9 @@ import me.astero.companions.CompanionsPlugin;
 import me.astero.companions.companiondata.PlayerCache;
 import me.astero.companions.companiondata.PlayerData;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.potion.PotionType;
 
 public class PlayerListener implements Listener {
 	
@@ -28,7 +30,7 @@ public class PlayerListener implements Listener {
 	{
 
 		Player player = e.getPlayer();
-		if(PlayerData.instanceOf(player).getActiveCompanionName() != "NONE" && PlayerData.instanceOf(player).getActiveCompanionName() != null)
+		if(PlayerData.instanceOf(player).hasActiveCompanionSelected())
 		{
 			PlayerData.instanceOf(player).removeCompanion();
 
@@ -45,45 +47,48 @@ public class PlayerListener implements Listener {
 
 					main.getCompanionUtil().delayCompanionSpawn(player);
 
-					if (e.getItem().getItemMeta() instanceof PotionMeta) {
-
-						Potion potion = Potion.fromItemStack(e.getItem());
+					if (e.getItem().getItemMeta() instanceof PotionMeta potionMeta) {
 
 						int durationLeftInTicks = 0;
 
-						if(potion.getEffects().size() == 0)
+						PotionType basePotionType = potionMeta.getBasePotionData().getType();
+						if(basePotionType != null)
 						{
-							PotionMeta potionMeta = (PotionMeta) e.getItem().getItemMeta();
-
-
-							durationLeftInTicks = Integer.valueOf(player.getPotionEffect(potionMeta.getBasePotionData().getType().getEffectType()).toString().split(":")[1].split("-")[0].replace("t", ""));
-						}
-						else
-						{
-							durationLeftInTicks = Integer.valueOf(potion.getEffects()
-									.toString().split(":")[1].split("-")[0].replace("t", "")
-									.replace("(", ""));
-						}
-
-
-
-
-
-						Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
-
-							@Override
-							public void run() {
-
-
-								PlayerData.instanceOf(player).removeCompanion();
-
-								main.getCompanionUtil().delayCompanionSpawn(player);
-
+							PotionEffectType effectType = basePotionType.getEffectType();
+							if(effectType != null)
+							{
+								PotionEffect activeEffect = player.getPotionEffect(effectType);
+								if(activeEffect != null)
+								{
+									durationLeftInTicks = activeEffect.getDuration();
+								}
 							}
-						}, durationLeftInTicks);
+						}
+
+						if(durationLeftInTicks == 0 && !potionMeta.getCustomEffects().isEmpty())
+						{
+							durationLeftInTicks = potionMeta.getCustomEffects().stream()
+									.mapToInt(PotionEffect::getDuration)
+									.max()
+									.orElse(0);
+						}
+
+						if(durationLeftInTicks > 0)
+						{
+							final int delay = durationLeftInTicks;
+							Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable() {
+
+								@Override
+								public void run() {
 
 
+									PlayerData.instanceOf(player).removeCompanion();
 
+									main.getCompanionUtil().delayCompanionSpawn(player);
+
+								}
+							}, delay);
+						}
 
 					}
 
@@ -92,7 +97,7 @@ public class PlayerListener implements Listener {
 
 
 
-				}
+			}
 			}, 20L);
 		}
 

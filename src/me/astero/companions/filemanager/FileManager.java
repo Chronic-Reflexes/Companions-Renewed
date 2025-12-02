@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import me.astero.companions.CompanionsPlugin;
 
 
+@SuppressWarnings("deprecation")
 public class FileManager {
 	
 	public File companions, messagesData, companionsData, customAbility;
@@ -169,12 +170,12 @@ public class FileManager {
 	            @Override
 	            public void run()
 	            { 
-	            	System.out.println(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Saving files right now, it MIGHT lag momentarily.");
+	            	main.getLogger().info(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Saving files right now, it MIGHT lag momentarily.");
 	            	
 	            	
 	            	saveFile();
-	
-	            	System.out.println(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Files are successfully saved! :)");
+
+	            	main.getLogger().info(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Files are successfully saved! :)");
 	
 	                    
 	                
@@ -188,7 +189,7 @@ public class FileManager {
 	            @Override
 	            public void run()
 	            { 
-	            	System.out.println(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Saving files right now, it MIGHT lag momentarily.");
+	            	main.getLogger().info(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Saving files right now, it MIGHT lag momentarily.");
 	            	
 	            	
 	            	for(Player player : Bukkit.getOnlinePlayers())
@@ -196,7 +197,7 @@ public class FileManager {
 	            		main.getCompanionUtil().saveCache(player);
 	            	}
 	
-	            	System.out.println(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Files are successfully saved! :)");
+	            	main.getLogger().info(ChatColor.GOLD + "(Companions) >" + ChatColor.GRAY + " Files are successfully saved! :)");
 	
 	                    
 	                

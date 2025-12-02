@@ -9,6 +9,7 @@ import me.astero.companions.CompanionsPlugin;
 import me.astero.companions.util.InventoryBuilder;
 
 
+@SuppressWarnings("deprecation")
 public class MainMenu {
 	
 	private CompanionsPlugin main;
@@ -42,7 +43,7 @@ public class MainMenu {
 		}
 		 catch(IllegalArgumentException soundNotFound)
 		 {
-			 System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Main Menu sound - " + ChatColor.YELLOW + 
+			 main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.RED + "Main Menu sound - " + ChatColor.YELLOW + 
 					 main.getFileHandler().getOpenCompanionsSound()+ ChatColor.RED +" is not found.");
 		 }
 

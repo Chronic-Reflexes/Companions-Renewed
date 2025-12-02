@@ -447,8 +447,8 @@ public class FileHandler {
 										cd.getItemAmount())
 								.setLore(cd.getItemDescription()).build());
 						
-						System.out.println(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + getCompanionName + ChatColor.RED + "'s ItemStack failed to load. - "
-								+ "Please check if the material name is for the correct Minecraft server version. " + ChatColor.YELLOW + "(A replacement itemstack will be used)");
+						main.getLogger().warning(ChatColor.GOLD + "COMPANIONS → " + ChatColor.YELLOW + getCompanionName + ChatColor.RED + "'s ItemStack failed to load. - "
+							+ "Please check if the material name is for the correct Minecraft server version. " + ChatColor.YELLOW + "(A replacement itemstack will be used)");
 					}
 				 }
 				 else
