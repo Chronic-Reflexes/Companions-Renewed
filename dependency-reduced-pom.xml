@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.astero</groupId>
   <artifactId>companions</artifactId>
-  <version>1.9.3</version>
+  <version>1.1</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
@@ -15,6 +15,7 @@
         </includes>
       </resource>
     </resources>
+    <finalName>companions-renewed-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -34,7 +35,9 @@
             </goals>
           </execution>
         </executions>
-        <configuration />
+        <configuration>
+          <finalName>companions-renewed-${project.version}</finalName>
+        </configuration>
       </plugin>
     </plugins>
   </build>

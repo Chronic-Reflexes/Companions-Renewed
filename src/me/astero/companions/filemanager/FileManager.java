@@ -88,17 +88,15 @@ public class FileManager {
 
 	public void initiateYAMLFiles() throws IOException
 	{
-		companions = new File(Bukkit.getServer().getPluginManager()
-				.getPlugin("Companions").getDataFolder(), "companions.yml");
+		File dataFolder = main.getDataFolder();
 		
-		messagesData = new File(Bukkit.getServer().getPluginManager()
-				.getPlugin("Companions").getDataFolder(), "lang.yml");
+		companions = new File(dataFolder, "companions.yml");
 		
-		companionsData = new File(Bukkit.getServer().getPluginManager()
-				.getPlugin("Companions").getDataFolder(), "companionsdata.yml");
+		messagesData = new File(dataFolder, "lang.yml");
 		
-		customAbility = new File(Bukkit.getServer().getPluginManager()
-				.getPlugin("Companions").getDataFolder(), "customability.yml");
+		companionsData = new File(dataFolder, "companionsdata.yml");
+		
+		customAbility = new File(dataFolder, "customability.yml");
 		
 		if(!companionsData.exists()) // If companiondata.yml is not found.
 		{

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -75,6 +76,31 @@ public class CompanionUtil {
 			}
 
 			PlayerData.instanceOf(player).getCommandTask().clear();
+		}
+	}
+
+	public void despawnAllCompanions()
+	{
+		for(Player online : Bukkit.getOnlinePlayers())
+		{
+			try
+			{
+				PlayerData data = PlayerData.instanceOf(online);
+				String activeName = data.getActiveCompanionName();
+				if(activeName != null && !activeName.equalsIgnoreCase("NONE"))
+				{
+					data.removeCompanion();
+				}
+				else
+				{
+					main.getCompanionPacket().despawnCompanion(online);
+				}
+			}
+			catch(Exception ex)
+			{
+				main.getLogger().log(Level.WARNING, "Failed to despawn companion cleanly for " + online.getName(), ex);
+				main.getCompanionPacket().despawnCompanion(online);
+			}
 		}
 	}
 	

@@ -71,7 +71,7 @@ public class CompanionsPlugin extends JavaPlugin {
 	@Override
 	public void onEnable() 
 	{
-		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " is loading up...");
+		getLogger().info(ChatColor.GOLD + "Companions Renewed" + ChatColor.GRAY + " by Chronic Reflexes" + ChatColor.GOLD + " is loading up...");
 		
 		getConfig().options().copyDefaults();
 		saveDefaultConfig();
@@ -145,7 +145,7 @@ public class CompanionsPlugin extends JavaPlugin {
 	    }
 
 
-		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " has been sucessfully loaded up!");
+		getLogger().info(ChatColor.GOLD + "Companions Renewed" + ChatColor.GRAY + " by Chronic Reflexes" + ChatColor.GOLD + " has been sucessfully loaded up!");
 		
 		//VersionChecker vc = new VersionChecker(this);
 		
@@ -166,7 +166,12 @@ public class CompanionsPlugin extends JavaPlugin {
 	public void onDisable() {
 		//int companionCount = 0;
 
-		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " is disabling and saving necessary files..");
+		getLogger().info(ChatColor.GOLD + "Companions Renewed" + ChatColor.GRAY + " is disabling and saving necessary files..");
+
+		if(companionUtil != null)
+		{
+			companionUtil.despawnAllCompanions();
+		}
 
 
 		PreparedStatement p = null;
@@ -192,7 +197,7 @@ public class CompanionsPlugin extends JavaPlugin {
 		
 		database.onDisabled();
 		
-		getLogger().info(ChatColor.GOLD + "Companions" + ChatColor.GRAY + " by Astero" + ChatColor.GOLD + " has been sucessfully disabled!");
+		getLogger().info(ChatColor.GOLD + "Companions Renewed" + ChatColor.GRAY + " by Chronic Reflexes" + ChatColor.GOLD + " has been sucessfully disabled!");
 	}
 	
 	public void saveActiveCompanion(String getCompanionName, Player player, PreparedStatement p, Connection conn) // method not in used

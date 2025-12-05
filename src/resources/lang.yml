@@ -1,5 +1,5 @@
 messages:
-  prefix: "&6&lCOMPANIONS → "
+  prefix: "&6&lCOMPANIONS RENEWED → "
   notPlayer: "&c&lERROR! &7You must be a &6player&7 to use this command!" 
   notEnoughMoney: "&cTransaction failure. You need &e$%price% &cto perform this action!"
   itemBought: "&aTransaction successful! &7You have just bought the &6%companion% COMPANION&7."
@@ -55,7 +55,7 @@ messages:
   blacklistedName: "&cThe name you have chosen is blacklisted!"
   helpMessage:
     - ""
-    - "&6Companions &7by Astero"
+    - "&6Companions Renewed &7by Chronic Reflexes"
     - ""
     - "&6Aliases:&e /c, /givec, /removec, /givecitem, /coin, /cc"
     - ""
@@ -74,5 +74,5 @@ messages:
     - "ADMIN:&e➩ &6/forceactive <player> <companion> &e- forces an owned Companion onto the specified player."
     - "ADMIN:&e➩ &6/forcedeactive <player>&e - forces the specified player's active Companion to be removed."    
     - "ADMIN:&e➩ &6/forceupgrade <player> <upgrade> &e- forces an upgrade upon specified player. (does not make player pay the upgrade fee)." 
-    - "ADMIN:&e➩ &6/companions reload &e- Reloads the Companions Plugin."     
+    - "ADMIN:&e➩ &6/companions reload &e- Reloads the Companions Renewed Plugin."     
     - ""

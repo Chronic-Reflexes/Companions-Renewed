@@ -4,8 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.astero</groupId>
 	<artifactId>companions</artifactId>
-	<version>1.9.3</version>
+	<version>1.1</version>
 	<build>
+		<finalName>companions-renewed-${project.version}</finalName>
 		<resources>
 			<resource>
 				<directory>${basedir}/src/resources</directory>
@@ -32,7 +33,7 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.1.0</version>
 				<configuration>
-					<!-- put your configurations here -->
+					<finalName>companions-renewed-${project.version}</finalName>
 				</configuration>
 				<executions>
 					<execution>
